@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "outDir": "./build/",
+    "jsx": "react",
+    "sourceMap": true,
+    "removeComments": true
+  },
+  "exclude": [
+    "node_modules",
+    "build"
+  ],
+  "include": [
+    "./src/**/*"
+  ]
+}
