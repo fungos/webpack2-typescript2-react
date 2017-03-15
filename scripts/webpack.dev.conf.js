@@ -1,6 +1,6 @@
 const webpack = require('webpack')
 const path = require('path')
-const config = require('./config')
+const config = require('./config').dev
 const merge = require('webpack-merge')
 const baseWebpackConfig = require('./webpack.base.conf')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -18,18 +18,19 @@ Object.keys(baseWebpackConfig.entry).forEach(function (name) {
 })
 
 module.exports = merge(baseWebpackConfig, {
+  devtool: config.sourceMap,
   output: {
-    path: config.dev.assetsRoot,
-    publicPath: config.dev.assetsPublicPath
+    path: config.assetsRoot,
+    publicPath: config.assetsPublicPath
   },
-  // cheap-module-eval-source-map is faster for development
-  devtool: 'cheap-module-eval-source-map',
   devServer: {
     hot: true,
-    contentBase: config.build.assetsRoot,
-    publicPath: config.dev.assetsPublicPath
+    contentBase: config.assetsRoot,
+    publicPath: config.assetsPublicPath
   },
   plugins: [
+    new webpack.DefinePlugin(config.defines),
+    //new webpack.IgnorePlugin(/^\.\/locale$/, [/moment$/]),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor'
     }),
@@ -41,9 +42,6 @@ module.exports = merge(baseWebpackConfig, {
         }
       }
     }),
-    new webpack.DefinePlugin({
-      'process.env': config.dev.env
-    }),
     // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),
@@ -54,8 +52,8 @@ module.exports = merge(baseWebpackConfig, {
     }),
     // https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
-      filename: config.build.index,
-      template: config.build.template,
+      filename: config.index,
+      template: config.template,
       inject: true
     }),
     new FriendlyErrorsPlugin()

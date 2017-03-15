@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const path = require('path')
-const config = require('./config')
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -17,9 +17,8 @@ module.exports = {
   output: {
     filename: '[name].js',
   },
-  devtool: "source-map",
   resolve: {
-    extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.json'],
+    extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.json', '.css', '.jsx'],
     modules: [
       resolve('src'),
       resolve('node_modules')
@@ -28,15 +27,38 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.css$/,
-        loader: 'style-loader'
+        test: /\.(woff|woff2)$/,
+        use: {
+          loader: 'url-loader',
+          options: {
+            name: 'fonts/[hash].[ext]',
+            limit: 5000,
+            mimetype: 'application/font-woff'
+          }
+        }
+      },
+      {
+        test: /\.(ttf|eot|svg)$/,
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: 'fonts/[hash].[ext]'
+          }
+        }
+      },
+      {
+        test: /\.scss$/,
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: "sass-loader"
+        })
       },
       {
         test: /\.css$/,
-        loader: 'css-loader',
-        options: {
-          modules: true
-        }
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: "css-loader"
+        })
       },
       {
         enforce: 'pre',

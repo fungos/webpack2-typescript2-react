@@ -4,7 +4,7 @@ import { SketchPicker } from 'react-color';
 import reactCSS from 'reactcss'
 import { Hello } from "./components/Hello";
 
-const styles = require<any>('styles.css')
+declare var FRONTEND_VERSION: string;
 
 export interface AppProperties { 
   background?: string; 
@@ -20,7 +20,7 @@ export class App extends React.Component<AppProperties, AppStates> {
     super(props);
     this.state = { 
       open: false,
-      background: this.props.background ? this.props.background : "#f00" 
+      background: this.props.background ? this.props.background : "#999" 
     };
   }
 
@@ -72,19 +72,19 @@ export class App extends React.Component<AppProperties, AppStates> {
     });
 
     const picker = (
-          <div style={ styles.popover }>
-            <div style={ styles.cover } onClick={ this.handleClose }/>
+          <div style={ css.popover }>
+            <div style={ css.cover } onClick={ this.handleClose }/>
             <SketchPicker color={ this.state.background } onChange={ this.handleChange } />
           </div>);
 
     // Here we demonstrate how to change styles in four different ways:
     // 1. acessing dom directly to set body background: document.body.style.backgroundColor = this.state.background 
-    // 2. using a definition on styles.css and acessing as a component: { styles.bg }
+    // 2. using the global styles.css
     // 3. inline style by using a CSSProperties object: {{ background: this.state.background }}
     // 4. using reactCSS: css.color
     document.body.style.backgroundColor = this.state.background;
     return (
-      <div className={ styles.bg } style={{ background: this.state.background }}>
+      <div className="bg" style={{ background: this.state.background }}>
         <Hello bundler="Webpack 2" compiler="TypeScript 2" framework="React" />
         <div style={ css.button }>
           <div style={ css.swatch } onClick={ this.handleClick }>
@@ -92,6 +92,9 @@ export class App extends React.Component<AppProperties, AppStates> {
           </div>
           { this.state.open ? picker : null }
         </div>
+        <br /><br />
+        <hr />
+        { FRONTEND_VERSION }
       </div>
     );
   }

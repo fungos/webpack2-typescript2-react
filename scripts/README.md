@@ -7,7 +7,7 @@ I've tried to let them organized in a easy way but there may be something missin
 
 They are:
 
-- `config/index.js` - general configuration (ie. static files path, document root path, routes, etc.)
+- `config.js` - general configuration (ie. static files path, document root path, routes, defines, etc.)
 - `build-prod.js` - script to build the production release code (use: yarn prod)
 - `check-versions.js` - helper script
 - `dev-client.js` - client reload for development

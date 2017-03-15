@@ -1,27 +1,12 @@
 require('./check-versions')()
 
-var config = require('./config')
-if (!process.env.NODE_ENV) {
-  process.env.NODE_ENV = JSON.parse(config.dev.env.NODE_ENV)
-}
-
+var config = require('./config').dev
 var opn = require('opn')
 var path = require('path')
 var express = require('express')
 var webpack = require('webpack')
 var proxyMiddleware = require('http-proxy-middleware')
-var webpackConfig = process.env.NODE_ENV === 'production'
-  ? require('./webpack.prod.conf')
-  : require('./webpack.dev.conf')
-
-// default port where dev server listens for incoming traffic
-var port = process.env.PORT || config.dev.port
-// automatically open browser, if not set will be false
-var autoOpenBrowser = !!config.dev.autoOpenBrowser
-// Define HTTP proxies to your custom API backend
-// https://github.com/chimurai/http-proxy-middleware
-var proxyTable = config.dev.proxyTable
-
+var webpackConfig = require('./webpack.dev.conf')
 var app = express()
 var compiler = webpack(webpackConfig)
 
@@ -37,19 +22,12 @@ var hotMiddleware = require('webpack-hot-middleware')(compiler, {
 // force page reload when html-webpack-plugin template changes
 compiler.plugin('compilation', function (compilation) {
 console.log('The compiler is starting a new compilation...')
-/*
-  // This is not triggering, I don't know why. So we do a reload on the compilation callback
-  compilation.plugin('html-webpack-plugin-after-emit', function (data, cb) {
-    hotMiddleware.publish({ action: 'reload' })
-    cb()
-})
-*/
   hotMiddleware.publish({ action: 'reload' })
 })
 
 // proxy api requests
-Object.keys(proxyTable).forEach(function (context) {
-  var options = proxyTable[context]
+Object.keys(config.proxyTable).forEach(function (context) {
+  var options = config.proxyTable[context]
   if (typeof options === 'string') {
     options = { target: options }
   }
@@ -67,22 +45,21 @@ app.use(devMiddleware)
 app.use(hotMiddleware)
 
 // serve pure static assets
-var staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubDirectory)
+var staticPath = path.posix.join(config.assetsPublicPath, config.assetsSubDirectory)
 app.use(staticPath, express.static('./static'))
 
-var uri = 'http://localhost:' + port
+var uri = 'http://localhost:' + config.port
 
 devMiddleware.waitUntilValid(function () {
   console.log('> Listening at ' + uri + '\n')
 })
 
-module.exports = app.listen(port, function (err) {
+module.exports = app.listen(config.port, function (err) {
   if (err) {
     console.log(err)
     return
   }
-
-  if (autoOpenBrowser) {
+  if (config.autoOpenBrowser) {
     opn(uri)
   }
 })
